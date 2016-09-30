@@ -1,9 +1,13 @@
+
 # Deploy lambdas
+
+## Make sure you have set your AWS profile properly
+'''export AWS_DEFAULT_PROFILE=staging'''
 
 '''
 mvn lambduh:deploy-lambda -P thing-search
 mvn lambduh:deploy-lambda -P thing
-mvn lambduh:deploy-lambda -P geo-search
+mvn lambduh:deploy-lambda -DlambdaRoleArn=arn:aws:iam::528773984231:role/FTFlexServices-Deployer -Dvpc-security-group-id=vpc-9f6a9ffb -Dvpc-subnet-one=subnet-01cede58 -Dvpc-subnet-two=subnet-01cede58 -P geo-search
 mvn lambduh:deploy-lambda -P geo-id
 '''
 

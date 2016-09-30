@@ -180,17 +180,16 @@
                             <!-- if accessKey and secretKey are not specified these are picked up from ~/.aws/credentials -->
                             <regionName>eu-west-1</regionName>
                             <runtime>Java8</runtime>
-                            <s3Bucket>video-lambda-bucket</s3Bucket>
+                            <s3Bucket>com.ft.video.artefacts</s3Bucket>
                             <description>Geo Search</description>
                             <timeout>300</timeout>
-                            <lambdaRoleArn>arn:aws:iam::810385116814:role/JemRayfieldsLambdaExecutionRole</lambdaRoleArn>
+                            <lambdaRoleArn>${env.lambda-role}</lambdaRoleArn>
                             <vpcSecurityGroupsIds>
-                                <param>sg-8d16e3e2</param>
+                                <param>${env.vpc-security-group-id}</param>
                             </vpcSecurityGroupsIds>
                             <vpcSubnetIds>
-                                <param>subnet-3a252751</param>
-                                <param>subnet-39252752</param>
-                                <param>subnet-3b252750</param>
+                                <param>${env.vpc-subnet-one}</param>
+                                <param>${env.vpc-subnet-two}</param>
                             </vpcSubnetIds>
                         </configuration>
                     </plugin>
