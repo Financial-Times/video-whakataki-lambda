@@ -1,0 +1,208 @@
+{
+  "Resources": {
+    "GeoAPI": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": "GeoAPI"
+      },
+      "Description": "Geonames search API"
+    },
+    "geo": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "GeoAPI"
+        },
+        "ParentId": {
+          "Fn::GetAtt": [
+            "GeoAPI",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "geo"
+      }
+    },
+    "geoId": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "GeoAPI"
+        },
+        "ParentId": { "Ref": "geo" },
+        "PathPart": "{id}"
+      }
+    },
+    "GetGeoLocationsMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "DependsOn": ["GeoAPI","geo"],
+      "Properties": {
+        "RestApiId": { "Ref": "GeoAPI" },
+        "ResourceId": { "Ref": "geo" },
+        "HttpMethod": "GET",
+        "MethodResponses": [{ "StatusCode" : "200" },{ "StatusCode": "404" }, { "StatusCode": "400" }],
+        "AuthorizationType": "NONE",
+        "Integration": { "IntegrationHttpMethod" : "POST",
+          "Type" : "AWS",
+          "IntegrationResponses" : [ { "StatusCode" : "200" },
+                                     { "StatusCode" : "400",
+                                          "SelectionPattern": ".*400 - Bad Request - Search invalid.*",
+                                          "ResponseTemplates": {"application/json": "#set($allParams = $input.params()) { \"body-json\" : $input.json('$'), \"params\" : { #foreach($type in $allParams.keySet()) #set($params = $allParams.get($type)) \"$type\" : { #foreach($paramName in $params.keySet()) \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\" #if($foreach.hasNext),#end #end } #if($foreach.hasNext),#end #end }, \"stage-variables\" : { #foreach($key in $stageVariables.keySet()) \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\" #if($foreach.hasNext),#end #end }, \"context\" : { \"account-id\" : \"$context.identity.accountId\", \"api-id\" : \"$context.apiId\", \"api-key\" : \"$context.identity.apiKey\", \"authorizer-principal-id\" : \"$context.authorizer.principalId\", \"caller\" : \"$context.identity.caller\", \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\", \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\", \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\", \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\", \"http-method\" : \"$context.httpMethod\", \"stage\" : \"$context.stage\", \"source-ip\" : \"$context.identity.sourceIp\", \"user\" : \"$context.identity.user\", \"user-agent\" : \"$context.identity.userAgent\", \"user-arn\" : \"$context.identity.userArn\", \"request-id\" : \"$context.requestId\", \"resource-id\" : \"$context.resourceId\", \"resource-path\" : \"$context.resourcePath\" } }",
+                                          "application/ld+json": "#set($allParams = $input.params()) { \"body-json\" : $input.json('$'), \"params\" : { #foreach($type in $allParams.keySet()) #set($params = $allParams.get($type)) \"$type\" : { #foreach($paramName in $params.keySet()) \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\" #if($foreach.hasNext),#end #end } #if($foreach.hasNext),#end #end }, \"stage-variables\" : { #foreach($key in $stageVariables.keySet()) \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\" #if($foreach.hasNext),#end #end }, \"context\" : { \"account-id\" : \"$context.identity.accountId\", \"api-id\" : \"$context.apiId\", \"api-key\" : \"$context.identity.apiKey\", \"authorizer-principal-id\" : \"$context.authorizer.principalId\", \"caller\" : \"$context.identity.caller\", \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\", \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\", \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\", \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\", \"http-method\" : \"$context.httpMethod\", \"stage\" : \"$context.stage\", \"source-ip\" : \"$context.identity.sourceIp\", \"user\" : \"$context.identity.user\", \"user-agent\" : \"$context.identity.userAgent\", \"user-arn\" : \"$context.identity.userArn\", \"request-id\" : \"$context.requestId\", \"resource-id\" : \"$context.resourceId\", \"resource-path\" : \"$context.resourcePath\" } }"}},
+                                     { "StatusCode" : "404",
+                                       "SelectionPattern": ".*404 - Thing Not Found.*",
+                                       "ResponseTemplates": {"application/json": "#set($allParams = $input.params()) { \"body-json\" : $input.json('$'), \"params\" : { #foreach($type in $allParams.keySet()) #set($params = $allParams.get($type)) \"$type\" : { #foreach($paramName in $params.keySet()) \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\" #if($foreach.hasNext),#end #end } #if($foreach.hasNext),#end #end }, \"stage-variables\" : { #foreach($key in $stageVariables.keySet()) \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\" #if($foreach.hasNext),#end #end }, \"context\" : { \"account-id\" : \"$context.identity.accountId\", \"api-id\" : \"$context.apiId\", \"api-key\" : \"$context.identity.apiKey\", \"authorizer-principal-id\" : \"$context.authorizer.principalId\", \"caller\" : \"$context.identity.caller\", \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\", \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\", \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\", \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\", \"http-method\" : \"$context.httpMethod\", \"stage\" : \"$context.stage\", \"source-ip\" : \"$context.identity.sourceIp\", \"user\" : \"$context.identity.user\", \"user-agent\" : \"$context.identity.userAgent\", \"user-arn\" : \"$context.identity.userArn\", \"request-id\" : \"$context.requestId\", \"resource-id\" : \"$context.resourceId\", \"resource-path\" : \"$context.resourcePath\" } }",
+                                                             "application/ld+json": "#set($allParams = $input.params()) { \"body-json\" : $input.json('$'), \"params\" : { #foreach($type in $allParams.keySet()) #set($params = $allParams.get($type)) \"$type\" : { #foreach($paramName in $params.keySet()) \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\" #if($foreach.hasNext),#end #end } #if($foreach.hasNext),#end #end }, \"stage-variables\" : { #foreach($key in $stageVariables.keySet()) \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\" #if($foreach.hasNext),#end #end }, \"context\" : { \"account-id\" : \"$context.identity.accountId\", \"api-id\" : \"$context.apiId\", \"api-key\" : \"$context.identity.apiKey\", \"authorizer-principal-id\" : \"$context.authorizer.principalId\", \"caller\" : \"$context.identity.caller\", \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\", \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\", \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\", \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\", \"http-method\" : \"$context.httpMethod\", \"stage\" : \"$context.stage\", \"source-ip\" : \"$context.identity.sourceIp\", \"user\" : \"$context.identity.user\", \"user-agent\" : \"$context.identity.userAgent\", \"user-arn\" : \"$context.identity.userArn\", \"request-id\" : \"$context.requestId\", \"resource-id\" : \"$context.resourceId\", \"resource-path\" : \"$context.resourcePath\" } }"}}],
+          "Uri"  : "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:810385116814:function:geo-search/invocations",
+          "RequestTemplates": {"application/json": "#set($inputRoot = $input.path('$')) \n { \"environment\": \"$stageVariables.environment\", \"searchString\": \"$util.urlDecode($input.params('searchString'))\", \"accept\": \"$input.params('accept')\"\n}",
+            "application/ld+json": "#set($inputRoot = $input.path('$')) \n { \"environment\": \"$stageVariables.environment\", \"searchString\": \"$util.urlDecode($input.params('searchString'))\", \"accept\": \"$input.params('accept')\"\n}"},
+          "Credentials":"arn:aws:iam::810385116814:role/JemRayfieldsLambdaExecutionRole"
+        },
+        "RequestParameters": {"method.request.querystring.searchString":true, "method.request.header.accept":true}
+      }
+    },
+    "GetGeoMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "DependsOn": ["GeoAPI","geoId"],
+      "Properties": {
+        "RestApiId": { "Ref": "GeoAPI" },
+        "ResourceId": { "Ref": "geoId" },
+        "HttpMethod": "GET",
+        "MethodResponses": [{ "StatusCode" : "200" },{ "StatusCode": "404" }],
+        "AuthorizationType": "NONE",
+        "Integration": { "IntegrationHttpMethod" : "POST",
+          "Type" : "AWS",
+          "IntegrationResponses" : [ {"StatusCode" : "200" },
+            {"StatusCode" : "404",
+              "SelectionPattern": ".*404 - Thing Not Found.*",
+              "ResponseTemplates": {"application/json": "#set($allParams = $input.params()) { \"body-json\" : $input.json('$'), \"params\" : { #foreach($type in $allParams.keySet()) #set($params = $allParams.get($type)) \"$type\" : { #foreach($paramName in $params.keySet()) \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\" #if($foreach.hasNext),#end #end } #if($foreach.hasNext),#end #end }, \"stage-variables\" : { #foreach($key in $stageVariables.keySet()) \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\" #if($foreach.hasNext),#end #end }, \"context\" : { \"account-id\" : \"$context.identity.accountId\", \"api-id\" : \"$context.apiId\", \"api-key\" : \"$context.identity.apiKey\", \"authorizer-principal-id\" : \"$context.authorizer.principalId\", \"caller\" : \"$context.identity.caller\", \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\", \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\", \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\", \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\", \"http-method\" : \"$context.httpMethod\", \"stage\" : \"$context.stage\", \"source-ip\" : \"$context.identity.sourceIp\", \"user\" : \"$context.identity.user\", \"user-agent\" : \"$context.identity.userAgent\", \"user-arn\" : \"$context.identity.userArn\", \"request-id\" : \"$context.requestId\", \"resource-id\" : \"$context.resourceId\", \"resource-path\" : \"$context.resourcePath\" } }",
+                "application/ld+json": "#set($allParams = $input.params()) { \"body-json\" : $input.json('$'), \"params\" : { #foreach($type in $allParams.keySet()) #set($params = $allParams.get($type)) \"$type\" : { #foreach($paramName in $params.keySet()) \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\" #if($foreach.hasNext),#end #end } #if($foreach.hasNext),#end #end }, \"stage-variables\" : { #foreach($key in $stageVariables.keySet()) \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\" #if($foreach.hasNext),#end #end }, \"context\" : { \"account-id\" : \"$context.identity.accountId\", \"api-id\" : \"$context.apiId\", \"api-key\" : \"$context.identity.apiKey\", \"authorizer-principal-id\" : \"$context.authorizer.principalId\", \"caller\" : \"$context.identity.caller\", \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\", \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\", \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\", \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\", \"http-method\" : \"$context.httpMethod\", \"stage\" : \"$context.stage\", \"source-ip\" : \"$context.identity.sourceIp\", \"user\" : \"$context.identity.user\", \"user-agent\" : \"$context.identity.userAgent\", \"user-arn\" : \"$context.identity.userArn\", \"request-id\" : \"$context.requestId\", \"resource-id\" : \"$context.resourceId\", \"resource-path\" : \"$context.resourcePath\" } }"}}],
+          "Uri"  : "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:810385116814:function:geo-id/invocations",
+          "RequestTemplates": {"application/json": "#set($inputRoot = $input.path('$')) \n { \"environment\": \"$stageVariables.environment\", \"id\": \"$input.params('id')\", \"accept\": \"$input.params('Accept')\"\n}",
+            "application/ld+json": "#set($inputRoot = $input.path('$')) \n { \"environment\": \"$stageVariables.environment\", \"id\": \"$input.params('id')\", \"accept\": \"$input.params('Accept')\"\n"},
+          "Credentials":"arn:aws:iam::810385116814:role/JemRayfieldsLambdaExecutionRole"
+        },
+        "RequestParameters": {"method.request.path.id":true, "method.request.header.Accept":true}
+      }
+    },
+    "GeoAPIDeployment": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "DependsOn": ["GeoAPI","geo","GetGeoLocationsMethod", "geoId", "GetGeoMethod"],
+      "Properties": {
+        "RestApiId": { "Ref": "GeoAPI" },
+        "Description": "Platform Arch deployment",
+        "StageName": "geodeployment"
+      }
+    },
+    "PlatformArchGeoStage": {
+      "Type": "AWS::ApiGateway::Stage",
+      "DependsOn": ["GeoAPI","geo","GetGeoLocationsMethod", "geoId", "GetGeoMethod"],
+      "Properties": {
+        "CacheClusterEnabled": "true",
+        "CacheClusterSize": "1.6",
+        "DeploymentId": { "Ref": "GeoAPIDeployment" },
+        "Description": "Platform Architecture Geo Deployment",
+        "RestApiId": { "Ref": "GeoAPI" },
+        "StageName": "platarchgeo",
+        "Variables": {"environment": "platarch"}
+      }
+    },
+    "ThingsAPI": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": "ThingsAPI"
+      },
+      "Description": "Concordance api for equivalence between identity"
+    },
+    "things": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "ThingsAPI"
+        },
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ThingsAPI",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "things"
+      }
+    },
+    "thing": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "ThingsAPI"
+        },
+        "ParentId": { "Ref": "things" },
+        "PathPart": "{uuid}"
+      }
+    },
+    "GetThingMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "DependsOn": ["ThingsAPI","thing"],
+      "Properties": {
+        "RestApiId": { "Ref": "ThingsAPI" },
+        "ResourceId": { "Ref": "thing" },
+        "HttpMethod": "GET",
+        "MethodResponses": [{ "StatusCode" : "200" },{ "StatusCode": "404" }],
+        "AuthorizationType": "NONE",
+        "Integration": { "IntegrationHttpMethod" : "POST",
+          "Type" : "AWS",
+          "IntegrationResponses" : [ {"StatusCode" : "200" },
+                                     {"StatusCode" : "404",
+                                      "SelectionPattern": ".*404 - Thing Not Found.*",
+                                      "ResponseTemplates": {"application/json": "#set($allParams = $input.params()) { \"body-json\" : $input.json('$'), \"params\" : { #foreach($type in $allParams.keySet()) #set($params = $allParams.get($type)) \"$type\" : { #foreach($paramName in $params.keySet()) \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\" #if($foreach.hasNext),#end #end } #if($foreach.hasNext),#end #end }, \"stage-variables\" : { #foreach($key in $stageVariables.keySet()) \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\" #if($foreach.hasNext),#end #end }, \"context\" : { \"account-id\" : \"$context.identity.accountId\", \"api-id\" : \"$context.apiId\", \"api-key\" : \"$context.identity.apiKey\", \"authorizer-principal-id\" : \"$context.authorizer.principalId\", \"caller\" : \"$context.identity.caller\", \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\", \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\", \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\", \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\", \"http-method\" : \"$context.httpMethod\", \"stage\" : \"$context.stage\", \"source-ip\" : \"$context.identity.sourceIp\", \"user\" : \"$context.identity.user\", \"user-agent\" : \"$context.identity.userAgent\", \"user-arn\" : \"$context.identity.userArn\", \"request-id\" : \"$context.requestId\", \"resource-id\" : \"$context.resourceId\", \"resource-path\" : \"$context.resourcePath\" } }",
+                                                            "application/ld+json": "#set($allParams = $input.params()) { \"body-json\" : $input.json('$'), \"params\" : { #foreach($type in $allParams.keySet()) #set($params = $allParams.get($type)) \"$type\" : { #foreach($paramName in $params.keySet()) \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\" #if($foreach.hasNext),#end #end } #if($foreach.hasNext),#end #end }, \"stage-variables\" : { #foreach($key in $stageVariables.keySet()) \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\" #if($foreach.hasNext),#end #end }, \"context\" : { \"account-id\" : \"$context.identity.accountId\", \"api-id\" : \"$context.apiId\", \"api-key\" : \"$context.identity.apiKey\", \"authorizer-principal-id\" : \"$context.authorizer.principalId\", \"caller\" : \"$context.identity.caller\", \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\", \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\", \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\", \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\", \"http-method\" : \"$context.httpMethod\", \"stage\" : \"$context.stage\", \"source-ip\" : \"$context.identity.sourceIp\", \"user\" : \"$context.identity.user\", \"user-agent\" : \"$context.identity.userAgent\", \"user-arn\" : \"$context.identity.userArn\", \"request-id\" : \"$context.requestId\", \"resource-id\" : \"$context.resourceId\", \"resource-path\" : \"$context.resourcePath\" } }"}}],
+          "Uri"  : "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:810385116814:function:things-concordance-by-uuid/invocations",
+          "RequestTemplates": {"application/json": "#set($inputRoot = $input.path('$')) \n { \"environment\": \"$stageVariables.environment\", \"thingURI\": \"$input.params('uuid')\", \"accept\": \"$input.params('Accept')\"\n}",
+            "application/ld+json": "#set($inputRoot = $input.path('$')) \n { \"environment\": \"$stageVariables.environment\", \"thingURI\": \"$input.params('uuid')\", \"accept\": \"$input.params('Accept')\"\n"},
+          "Credentials":"arn:aws:iam::810385116814:role/JemRayfieldsLambdaExecutionRole"
+        },
+        "RequestParameters": {"method.request.path.uuid":true, "method.request.header.Accept":true}
+      }
+    },
+    "GetThingsMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "DependsOn": ["ThingsAPI","things"],
+      "Properties": {
+        "RestApiId": { "Ref": "ThingsAPI" },
+        "ResourceId": { "Ref": "things" },
+        "HttpMethod": "GET",
+        "MethodResponses": [{ "StatusCode" : "200" }],
+        "AuthorizationType": "NONE",
+        "Integration": { "IntegrationHttpMethod" : "POST",
+          "Type" : "AWS",
+          "IntegrationResponses" : [ { "StatusCode" : "200" } ],
+          "Uri"  : "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:810385116814:function:things-concordance-search/invocations",
+          "RequestTemplates": {"application/json": "#set($inputRoot = $input.path('$')) \n { \"environment\": \"$stageVariables.environment\", \"id\": \"$input.params('id')\", \"label\": \"$input.params('label')\", \"type\": \"$input.params('type')\", \"accept\": \"$input.params('Accept')\"\n}",
+                               "application/ld+json": "#set($inputRoot = $input.path('$')) \n { \"environment\": \"$stageVariables.environment\", \"id\": \"$input.params('id')\", \"label\": \"$input.params('label')\", \"type\": \"$input.params('type')\", \"accept\": \"$input.params('Accept')\"\n}"},
+          "Credentials":"arn:aws:iam::810385116814:role/JemRayfieldsLambdaExecutionRole"
+        },
+        "RequestParameters": {"method.request.querystring.label":true, "method.request.querystring.type":true, "method.request.querystring.id":true,"method.request.header.accept":true}
+      }
+    },
+    "ThingsAPIDeployment": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "DependsOn": ["ThingsAPI","things","things","GetThingsMethod","GetThingMethod"],
+      "Properties": {
+        "RestApiId": { "Ref": "ThingsAPI" },
+        "Description": "Platform Arch deployment",
+        "StageName": "thingsdeployment"
+      }
+    },
+    "PlatformArchStage": {
+      "Type": "AWS::ApiGateway::Stage",
+      "DependsOn": ["ThingsAPI","things","things","GetThingsMethod","GetThingMethod","ThingsAPIDeployment"],
+      "Properties": {
+        "CacheClusterEnabled": "true",
+        "CacheClusterSize": "1.6",
+        "DeploymentId": { "Ref": "ThingsAPIDeployment" },
+        "Description": "Platform Architecture Things Deployment",
+        "RestApiId": { "Ref": "ThingsAPI" },
+        "StageName": "platarch",
+        "Variables": {"environment": "platarch"}
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+PREFIX thing: <http://www.ft.com/ontology/thing/>
+CONSTRUCT
+{
+   <{{thingUri}}> rdf:type ?type ;
+                thing:prefLabel ?prefLabel .
+}
+WHERE
+{
+   <{{thingUri}}> a thing:Thing ;
+                rdf:type ?type ;
+                thing:prefLabel ?prefLabel .
+}

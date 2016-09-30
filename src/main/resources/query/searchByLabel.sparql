@@ -1,0 +1,42 @@
+PREFIX thing: <http://www.ft.com/ontology/thing/>
+PREFIX event: <http://www.ft.com/ontology/event/>
+PREFIX agent: <http://www.ft.com/ontology/agent/>
+PREFIX location: <http://www.ft.com/ontology/location/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix bds: <http://www.bigdata.com/rdf/search#>
+CONSTRUCT {
+  ?thingUri             rdf:type 			 	<{{type}}>;
+                        thing:equivalent 		?equivalentThing;
+  			            thing:identifierValue 	?identifierValue;
+    		            thing:prefLabel 		?thingPrefLabel;
+                        event:prov				?thingProvenance .
+ ?thingProvenance       rdf:type                event:InstantaneousEvent;
+                        event:atTime            ?provTime;
+                        event:agentRole         ?provAgentRole .
+ ?provAgentRole	        rdf:type 		        agent:AgentRole;
+                        agent:hadAgent 	        ?provAgent;
+                		agent:role 		        ?provRole .
+ ?provAgent		        thing:label 	        ?agentLabel .
+ ?provRole		        thing:label 	        ?roleLabel .
+} WHERE {
+  ?label                bds:search              "*{{labelSearch}}*" .
+  GRAPH ?thingProvenance {
+    ?thingUri           rdf:type                <{{type}}>;
+                        thing:label             ?label;
+                        thing:prefLabel         ?thingPrefLabel .
+    OPTIONAL {
+    ?thingUri           thing:identifierValue 	?identifierValue;
+    }
+    ?thingProvenance    event:atTime            ?provTime;
+                	    event:agentRole         ?provAgentRole .
+  	?provAgentRole	    agent:hadAgent 	        ?provAgent;
+                	    agent:role 		        ?provRole .
+    ?provAgent		    thing:label 	        ?agentLabel .
+  	?provRole           thing:label 	        ?roleLabel .
+  }
+}
+ORDER BY ASC(str(?thingPrefLabel))
+OFFSET 0
+LIMIT 50
+
+

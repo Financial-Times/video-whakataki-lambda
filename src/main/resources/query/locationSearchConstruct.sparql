@@ -1,0 +1,50 @@
+PREFIX gn: <http://www.geonames.org/ontology#>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX score: <http://www.ft.com/ontology/score/>
+CONSTRUCT {
+  ?geonamesuri rdf:type 			 	gn:Feature ;
+               gn:name                  ?name ;
+               geo:lat                  ?lat ;
+               geo:long                 ?long ;
+               score:relevance          ?relevance ;
+               score:rank               ?rank ;
+               gn:featureClass          ?featureClass ;
+               gn:featureCode           ?featureCode ;
+               gn:population            ?population ;
+               gn:wikipediaArticle      ?wikipediaArticle ;
+               gn:locationMap           ?geonamesMap ;
+               gn:countryCode           ?countryCode ;
+               rdfs:seeAlso             ?seeAlso
+} WHERE {
+  ?name        bds:search  "{{searchString}}" ;
+               bds:matchAllTerms "true" ;
+               bds:minRelevance "0.25" ;
+               bds:relevance ?relevance ;
+               bds:searchTimeout "3000" ;
+               bds:rank ?rank .
+
+  ?geonamesuri  gn:name ?name ;
+                geo:lat ?lat ;
+  			    geo:long ?long ;
+                gn:featureClass	?featureClass ;
+                gn:featureCode	?featureCode ;
+                FILTER ( ?featureClass  = gn:P || ?featureClass = gn:A || ?featureCode = gn:S.BDG ) .
+
+  OPTIONAL {
+  	?geonamesuri gn:population ?population .
+  }
+  OPTIONAL {
+    ?geonamesuri gn:wikipediaArticle ?wikipediaArticle
+  }
+  OPTIONAL {
+    ?geonamesuri gn:locationMap ?geonamesMap
+  }
+  OPTIONAL {
+    ?geonamesuri gn:countryCode ?countryCode
+  }
+  OPTIONAL {
+    ?geonamesuri rdfs:seeAlso ?seeAlso
+  }
+}
+ORDER BY  DESC (xsd:integer(?population)) DESC(?relevance) DESC(?rank)
+LIMIT 20

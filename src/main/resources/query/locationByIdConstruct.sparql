@@ -1,0 +1,37 @@
+PREFIX gn: <http://www.geonames.org/ontology#>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX score: <http://www.ft.com/ontology/score/>
+CONSTRUCT {
+  <http://sws.geonames.org/{{geonamesId}}/> rdf:type 			 	gn:Feature ;
+                                            gn:name                  ?name ;
+                                            geo:lat                  ?lat ;
+                                            geo:long                 ?long ;
+                                            gn:featureClass          ?featureClass ;
+                                            gn:featureCode           ?featureCode ;
+                                            gn:population            ?population ;
+                                            gn:wikipediaArticle      ?wikipediaArticle ;
+                                            gn:locationMap           ?geonamesMap ;
+                                            gn:countryCode           ?countryCode ;
+                                            rdfs:seeAlso             ?seeAlso
+} WHERE {
+  <http://sws.geonames.org/{{geonamesId}}/>     gn:name ?name ;
+                                                geo:lat ?lat ;
+    		                                    geo:long ?long ;
+                                                gn:featureClass	?featureClass ;
+                                                gn:featureCode	?featureCode ;
+  OPTIONAL {
+  	<http://sws.geonames.org/{{geonamesId}}/> gn:population ?population .
+  }
+  OPTIONAL {
+    <http://sws.geonames.org/{{geonamesId}}/> gn:wikipediaArticle ?wikipediaArticle
+  }
+  OPTIONAL {
+    <http://sws.geonames.org/{{geonamesId}}/> gn:locationMap ?geonamesMap
+  }
+  OPTIONAL {
+    <http://sws.geonames.org/{{geonamesId}}/> gn:countryCode ?countryCode
+  }
+  OPTIONAL {
+    <http://sws.geonames.org/{{geonamesId}}/> rdfs:seeAlso ?seeAlso
+  }
+}

@@ -1,0 +1,98 @@
+PREFIX thing: <http://www.ft.com/ontology/thing/>
+PREFIX event: <http://www.ft.com/ontology/event/>
+PREFIX agent: <http://www.ft.com/ontology/agent/>
+CONSTRUCT {
+  ?thingUri rdf:type 			 	thing:Thing ;
+                thing:equivalent 		?equivalentThing ;
+  				thing:identifierValue 	?identifierValue ;
+    		    thing:prefLabel 		?thingPrefLabel ;
+                event:prov				?thingProvenance .
+
+ ?thingProvenance rdf:type  event:InstantaneousEvent;
+                  event:atTime ?provTime ;
+                  event:agentRole ?provAgentRole .
+
+ ?provAgentRole	rdf:type 		agent:AgentRole;
+                				agent:hadAgent 	?provAgent ;
+                				agent:role 		?provRole .
+
+ ?provAgent		thing:label 	?agentLabel .
+
+ ?provRole		thing:label 	?roleLabel .
+
+ ?equivalentThing rdf:type ?equivalentThingType ;
+                  thing:prefLabel  ?equivalentThingPrefLabel ;
+                  thing:identifierValue ?equivalentThingidentifierValue ;
+                  event:prov			?equivalentThingProvenance .
+
+ ?equivalentThingProvenance   event:atTime ?equivalentThingProvTime ;
+                              event:agentRole ?equivalentThingProvAgentRole .
+
+ ?equivalentThingProvAgentRole	agent:hadAgent 	?equivalentThingProvAgent ;
+                                agent:role 		?equivalentThingProvRole .
+
+ ?equivalentThingProvAgent		thing:label 	?equivalentThingAgentPrefLabel .
+
+ ?equivalentThingProvRole		thing:label 	?equivalentThingRolePrefLabel .
+
+} WHERE {
+      GRAPH ?thingProvenance {
+					 ?thingUri thing:identifierValue "{{thingIdentifierValue}}"@en .
+                     ?thingUri thing:prefLabel  ?thingPrefLabel .
+      }
+
+  	  ?thingProvenance event:atTime ?provTime ;
+                	   event:agentRole ?provAgentRole .
+
+  	  ?provAgentRole	rdf:type 		agent:AgentRole;
+                		agent:hadAgent 	?provAgent ;
+                		agent:role 		?provRole .
+
+     ?provAgent		thing:label 	?agentLabel .
+
+  	 ?provRole       thing:label 	?roleLabel .
+     OPTIONAL {
+        ?thingUri thing:identifierValue ?identifierValue .
+     }
+
+     OPTIONAL {
+        ?thingUri thing:equivalent 	 ?equivalentThing ;
+                  rdf:type ?equivalentThingType .
+        GRAPH ?equivalentThingProvenance {
+              ?equivalentThing   thing:prefLabel 	?equivalentThingPrefLabel .
+        }
+        ?equivalentThingProvenance  event:atTime ?equivalentThingProvTime ;
+                                    event:agentRole ?equivalentThingProvAgentRole .
+
+        ?equivalentThingProvAgentRole	agent:hadAgent 	?equivalentThingProvAgent ;
+                                        agent:role 		?equivalentThingProvRole .
+
+        ?equivalentThingProvAgent		thing:label 	?equivalentThingAgentPrefLabel .
+
+        ?equivalentThingProvRole		thing:label 	?equivalentThingRolePrefLabel .
+
+        OPTIONAL {
+        	?equivalentThing thing:identifierValue ?equivalentThingidentifierValue .
+        }
+	}
+
+  	OPTIONAL {
+    	?equivalentThing thing:equivalent 	?thingUri  ;
+                          rdf:type ?equivalentThingType .
+        GRAPH  ?equivalentThingProvenance {
+        	?equivalentThing   thing:prefLabel 	?equivalentThingPrefLabel .
+		}
+        ?equivalentThingProvenance   event:atTime ?equivalentThingProvTime ;
+                                     event:agentRole ?equivalentThingProvAgentRole .
+
+        ?equivalentThingProvAgentRole	agent:hadAgent 	?equivalentThingProvAgent ;
+                                        agent:role 		?equivalentThingProvRole .
+
+        ?equivalentThingProvAgent	    thing:label 	?equivalentThingAgentPrefLabel .
+
+        ?equivalentThingProvRole       thing:label 	?equivalentThingRolePrefLabel .
+        OPTIONAL {
+        	?equivalentThing thing:identifierValue ?equivalentThingidentifierValue .
+        }
+	}
+}

@@ -1,0 +1,19 @@
+{
+  "@context": {
+    "id": "@id",
+    "type": "@type",
+    "value": "@value",
+    "language": "@language",
+    "things": "http://api.ft.com/things/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "prov":"http://www.ft.com/ontology/event/prov",
+    "thing" : "http://www.ft.com/ontology/thing/",
+    "agent" : "http://www.ft.com/ontology/agent/",
+    "event" : "http://www.ft.com/ontology/event/",
+    "location" : "http://www.ft.com/ontology/location/",
+    "gn" : "http://www.geonames.org/ontology#",
+    "geo" : "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "score" : "http://www.ft.com/ontology/score/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#"
+  }
+}

@@ -1,0 +1,97 @@
+PREFIX thing: <http://www.ft.com/ontology/thing/>
+PREFIX event: <http://www.ft.com/ontology/event/>
+PREFIX agent: <http://www.ft.com/ontology/agent/>
+CONSTRUCT {
+  <{{thingUri}}> rdf:type 			 	thing:Thing ;
+                thing:equivalent 		?equivalentThing ;
+  				thing:identifierValue 	?identifierValue ;
+    		    thing:prefLabel 		?thingPrefLabel ;
+                event:prov				?thingProvenance .
+
+ ?thingProvenance rdf:type  event:InstantaneousEvent;
+                  event:atTime ?provTime ;
+                  event:agentRole ?provAgentRole .
+
+ ?provAgentRole	rdf:type 		agent:AgentRole;
+                				agent:hadAgent 	?provAgent ;
+                				agent:role 		?provRole .
+
+ ?provAgent		thing:label 	?agentLabel .
+
+ ?provRole		thing:label 	?roleLabel .
+
+ ?equivalentThing rdf:type ?equivalentThingType ;
+                  thing:prefLabel  ?equivalentThingPrefLabel ;
+                  thing:identifierValue ?equivalentThingidentifierValue ;
+                  event:prov			?equivalentThingProvenance .
+
+ ?equivalentThingProvenance   event:atTime ?equivalentThingProvTime ;
+                              event:agentRole ?equivalentThingProvAgentRole .
+
+ ?equivalentThingProvAgentRole	agent:hadAgent 	?equivalentThingProvAgent ;
+                                agent:role 		?equivalentThingProvRole .
+
+ ?equivalentThingProvAgent		thing:label 	?equivalentThingAgentPrefLabel .
+
+ ?equivalentThingProvRole		thing:label 	?equivalentThingRolePrefLabel .
+
+} WHERE {
+
+                     << <{{thingUri}}> thing:prefLabel  ?thingPrefLabel >> event:prov ?thingProvenance .
+  					   ?thingProvenance event:atTime ?provTime ;
+                						event:agentRole ?provAgentRole .
+
+  						?provAgentRole	rdf:type 		agent:AgentRole;
+                						agent:hadAgent 	?provAgent ;
+                						agent:role 		?provRole .
+
+                        ?provAgent		thing:label 	?agentLabel .
+
+  						?provRole       thing:label 	?roleLabel .
+                     OPTIONAL {
+                        <{{thingUri}}> thing:identifierValue ?identifierValue .
+                     }
+
+                     {
+                     	OPTIONAL {
+                     		 <{{thingUri}}>     thing:equivalent    ?equivalentThing .
+                     		<<?equivalentThing   thing:prefLabel 	?equivalentThingPrefLabel >> event:prov ?equivalentThingProvenance .
+
+
+                            ?equivalentThingProvenance  event:atTime ?equivalentThingProvTime ;
+                                            			event:agentRole ?equivalentThingProvAgentRole .
+
+                            ?equivalentThingProvAgentRole	agent:hadAgent 	?equivalentThingProvAgent ;
+                                            				agent:role 		?equivalentThingProvRole .
+
+                            ?equivalentThingProvAgent		thing:label 	?equivalentThingAgentPrefLabel .
+
+                            ?equivalentThingProvRole		thing:label 	?equivalentThingRolePrefLabel .
+
+                        	OPTIONAL {
+                       			?equivalentThing thing:identifierValue ?equivalentThingidentifierValue .
+                        	}
+  					 	}
+                     }
+  					 UNION
+  					 {
+                     	OPTIONAL {
+                     		 ?equivalentThing   thing:equivalent 	 <{{thingUri}}> .
+                             <<?equivalentThing thing:prefLabel 	?equivalentThingPrefLabel  >> event:prov ?equivalentThingProvenance .
+
+
+                            ?equivalentThingProvenance   event:atTime ?equivalentThingProvTime ;
+                                                         event:agentRole ?equivalentThingProvAgentRole .
+
+                            ?equivalentThingProvAgentRole	agent:hadAgent 	?equivalentThingProvAgent ;
+                                                            agent:role 		?equivalentThingProvRole .
+
+                            ?equivalentThingProvAgent	    thing:label 	?equivalentThingAgentPrefLabel .
+
+                            ?equivalentThingProvRole       thing:label 	?equivalentThingRolePrefLabel .
+                        	OPTIONAL {
+                       			?equivalentThing thing:identifierValue ?equivalentThingidentifierValue .
+                        	}
+                     	}
+                     }
+}

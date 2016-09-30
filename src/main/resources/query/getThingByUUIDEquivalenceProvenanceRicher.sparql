@@ -1,0 +1,108 @@
+PREFIX thing: <http://www.ft.com/ontology/thing/>
+PREFIX event: <http://www.ft.com/ontology/event/>
+PREFIX agent: <http://www.ft.com/ontology/agent/>
+CONSTRUCT {
+ <{{thingUri}}> rdf:type 			 	?type ;
+                thing:equivalent 		?equivalentThing ;
+  				thing:identifierValue 	?identifierValue ;
+    		    thing:prefLabel 		?thingPrefLabel ;
+                event:prov				?thingProvenance .
+
+ ?thingProvenance rdf:type ?provType ;
+                  event:atTime ?provTime ;
+                  event:agentRole ?provAgentRole .
+
+ ?provAgentRole	rdf:type 		agent:AgentRole;
+                				agent:hadAgent 	?provAgent ;
+                				agent:role 		?provRole .
+
+ ?provAgent		rdf:type 		?agentType ;
+                                thing:label 	?agentPrefLabel .
+
+ ?equivalentThing rdf:type ?equivalentThingType ;
+                  thing:prefLabel  ?equivalentThingPrefLabel ;
+                  thing:identifierValue ?equivalentThingidentifierValue ;
+                  event:prov			?equivalentThingProvenance .
+
+ ?equivalentThingProvenance   rdf:type ?equivalentThingProvType ;
+                              event:atTime ?equivalentThingProvTime ;
+                              event:agentRole ?equivalentThingProvAgentRole .
+
+ ?equivalentThingProvAgentRole	rdf:type 		agent:AgentRole;
+                                agent:hadAgent 	?equivalentThingProvAgent ;
+                                agent:role 		?equivalentThingProvRole .
+
+ ?equivalentThingProvAgent		rdf:type 		?equivalentThingAgentType ;
+                                thing:label 	?equivalentThingAgentPrefLabel .
+
+} WHERE {
+
+                     <<<{{thingUri}}> rdf:type         ?type >> event:prov ?thingProvenance .
+                       <{{thingUri}}> thing:prefLabel  ?thingPrefLabel .
+  					   ?thingProvenance rdf:type ?provType ;
+                        				event:atTime ?provTime ;
+                						event:agentRole ?provAgentRole .
+
+  						?provAgentRole	rdf:type 		agent:AgentRole;
+                						agent:hadAgent 	?provAgent ;
+                						agent:role 		?provRole .
+
+                        ?provAgent		rdf:type 		?agentType ;
+                                        thing:label 	?agentPrefLabel .
+                     OPTIONAL {
+                       <{{thingUri}}> thing:identifierValue ?identifierValue .
+                     }
+
+                     {
+                     	OPTIONAL {
+                     		<{{thingUri}}>     thing:equivalent    ?equivalentThing .
+                     		?equivalentThing                                                    rdf:type 			?equivalentThingType .
+                     		<<?equivalentThing   thing:prefLabel 	?equivalentThingPrefLabel >> event:prov ?equivalentThingProvenance .
+
+
+                            ?equivalentThingProvenance  rdf:type ?equivalentThingProvType ;
+                                                        event:atTime ?equivalentThingProvTime ;
+                                            			event:agentRole ?equivalentThingProvAgentRole .
+
+                            ?equivalentThingProvAgentRole	rdf:type 		agent:AgentRole;
+                                            				agent:hadAgent 	?equivalentThingProvAgent ;
+                                            				agent:role 		?equivalentThingProvRole .
+
+                            ?equivalentThingProvAgent		rdf:type 		?equivalentThingAgentType ;
+                                                            thing:label 	?equivalentThingAgentPrefLabel .
+
+                            ?equivalentThingProvAgent		rdf:type 		?equivalentThingAgentType ;
+                                                            thing:label 	?equivalentThingAgentPrefLabel .
+
+                        	OPTIONAL {
+                       			?equivalentThing thing:identifierValue ?equivalentThingidentifierValue .
+                        	}
+  					 	}
+                     }
+  					 UNION
+  					 {
+                     	OPTIONAL {
+                     		 ?equivalentThing   thing:equivalent 	<{{thingUri}}> ;
+                     		                    rdf:type 			?equivalentThingType .
+                             <<?equivalentThing thing:prefLabel 	?equivalentThingPrefLabel  >> event:prov ?equivalentThingProvenance .
+
+
+                            ?equivalentThingProvenance   rdf:type ?equivalentThingProvType ;
+                                                         event:atTime ?equivalentThingProvTime ;
+                                                         event:agentRole ?equivalentThingProvAgentRole .
+
+                            ?equivalentThingProvAgentRole	rdf:type 		agent:AgentRole;
+                                                            agent:hadAgent 	?equivalentThingProvAgent ;
+                                                            agent:role 		?equivalentThingProvRole .
+
+                            ?equivalentThingProvAgent	    rdf:type 		?equivalentThingAgentType ;
+                                                            thing:label 	?equivalentThingAgentPrefLabel .
+
+                            ?equivalentThingProvAgent       rdf:type 		?equivalentThingAgentType ;
+                                                            thing:label 	?equivalentThingAgentPrefLabel .
+                        	OPTIONAL {
+                       			?equivalentThing thing:identifierValue ?equivalentThingidentifierValue .
+                        	}
+                     	}
+                     }
+}

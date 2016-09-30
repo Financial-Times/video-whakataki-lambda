@@ -1,0 +1,36 @@
+PREFIX gn: <http://www.geonames.org/ontology#>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+SELECT *
+WHERE {
+  ?label        bds:search  "chelsea" ;
+                bds:matchAllTerms "true" ;
+                bds:minRelevance "0.25" ;
+                bds:relevance ?relevance ;
+                bds:rank ?rank .
+  
+  ?geonamesuri  gn:name ?label ;
+                geo:lat ?lat ;
+  			    geo:long ?long ;
+                gn:featureClass	?featureClass ;
+                gn:featureCode	?featureCode ;
+
+               FILTER ( ?featureClass  = gn:P || ?featureClass = gn:A ) .
+  
+  OPTIONAL {
+  	?geonamesuri gn:population ?population .           
+  }   
+  OPTIONAL {
+    ?geonamesuri gn:wikipediaArticle ?wikipediaArticle
+  }  
+  OPTIONAL {
+    ?geonamesuri gn:locationMap ?geonamesMap
+  }  
+  OPTIONAL {
+    ?geonamesuri gn:countryCode ?countryCode
+  }            
+  OPTIONAL {
+    ?geonamesuri rdfs:seeAlso ?seeAlso
+  }               
+} 
+ORDER BY  DESC(?relevance) DESC(?rank) DESC (xsd:integer(?population))
+LIMIT 20

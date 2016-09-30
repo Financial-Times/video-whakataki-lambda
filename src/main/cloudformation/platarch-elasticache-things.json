@@ -1,0 +1,39 @@
+{
+  "Resources": {
+    "ThingsElastiCacheCluster": {
+      "Type": "AWS::ElastiCache::CacheCluster",
+      "Properties": {
+        "AutoMinorVersionUpgrade": true,
+        "AZMode": "cross-az",
+        "CacheNodeType": "cache.t2.small",
+        "ClusterName": "things",
+        "Engine": "memcached",
+        "EngineVersion": "1.4.24",
+        "NumCacheNodes": "2",
+        "Port": 11211,
+        "PreferredMaintenanceWindow": "sat:03:00-sat:05:00",
+        "Tags": [
+          {
+            "Key": "environment",
+            "Value": "d"
+          },
+          {
+            "Key": "ipCode",
+            "Value": "P225"
+          },
+          {
+            "Key": "systemCode",
+            "Value": "reference-data"
+          },
+          {
+            "Key": "Name",
+            "Value": "ReferenceDataCache"
+          }
+        ],
+        "VpcSecurityGroupIds": [
+          "sg-8d16e3e2"
+        ]
+      }
+    }
+  }
+}

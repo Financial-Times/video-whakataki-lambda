@@ -1,0 +1,17 @@
+serviceURL : http://ec2-54-194-176-105.eu-west-1.compute.amazonaws.com/blazegraph
+namespace : geo
+apiGw : p8c0zf0s6d.execute-api.eu-west-1.amazonaws.com/dev
+useCache : true
+useLocalCache : false
+defaultQueryServiceTimeOutInMs : 1000
+thingByIdTimeOutInMs : 750
+liveCacheTTLInSec : 300
+staleCacheTTLInSec : 86400
+memcacheServers : things.bzii9d.cfg.euw1.cache.amazonaws.com:11211
+memcacheProtocal : BINARY
+memcacheOpTimeout : 500
+memcacheTimeoutExceptionThreshold : 500
+memcacheModificationTimeoutInSec : 1
+memcacheAccessTimeoutInSec : 1
+useLBS : false
+geoByLabelTimeOutInSec : 345600
