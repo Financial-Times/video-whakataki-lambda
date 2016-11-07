@@ -15,7 +15,7 @@ public class GeoThingLambdaIntegrationTest {
         GeoThingLambda geoThingLambda = new GeoThingLambda();
 
         GeoRequest geoRequest = new GeoRequest();
-        geoRequest.environment = "local";
+        geoRequest.environment = "staging";
         geoRequest.setAccept("application/ld+json");
         geoRequest.setSearchString("Germany");
         geoRequest.setResourcePath("/geo");
@@ -35,7 +35,7 @@ public class GeoThingLambdaIntegrationTest {
         GeoThingLambda geoThingLambda = new GeoThingLambda();
 
         GeoRequest geoRequest = new GeoRequest();
-        geoRequest.environment = "local";
+        geoRequest.environment = "staging";
         geoRequest.setAccept("application/json");
         geoRequest.setSearchString("Germany");
         geoRequest.setResourcePath("/geo");

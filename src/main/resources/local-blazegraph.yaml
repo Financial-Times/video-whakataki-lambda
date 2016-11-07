@@ -1,4 +1,4 @@
-serviceURL : http://localhost/blazegraph
+serviceURL : http://10.170.29.251/blazegraph
 namespace : geo
 apiGw : p8c0zf0s6d.execute-api.eu-west-1.amazonaws.com/dev
 useCache : true

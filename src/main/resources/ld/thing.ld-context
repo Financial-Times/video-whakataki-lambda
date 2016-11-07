@@ -4,7 +4,7 @@
     "type": "@type",
     "value": "@value",
     "language": "@language",
-    "things": "http://api.ft.com/things/",
+    "things": "https://thing-videotest.ft.com/things/",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "prov":"http://www.ft.com/ontology/event/prov",
     "thing" : "http://www.ft.com/ontology/thing/",
