@@ -73,7 +73,8 @@ public class CacheManager implements Repository {
                 Response staleResponse = this.getLiveStaleCache().getStale(request.getCacheKey(cachePrefix));
                 if (staleResponse == null) {
                     LOG.debug("Resource loading failure");
-                    throw new ThingNotFoundException("404 - Thing Not Found [" + request.getCacheKey(this.cachePrefix) + "]");
+                    // Change this to Server Error
+                    throw new ThingNotFoundException("500 - Query Failure and stale cache miss [" + request.getCacheKey(this.cachePrefix) + "]");
                 }
                 LOG.debug("Resource from stale because of failure to load", queryLookUpResult.getCause());
                 return staleResponse;

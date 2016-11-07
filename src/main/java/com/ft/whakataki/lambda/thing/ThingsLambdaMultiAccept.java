@@ -20,6 +20,10 @@ import com.ft.whakataki.lambda.thing.service.*;
 import org.json.simple.JSONObject;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class ThingsLambdaMultiAccept {
@@ -29,7 +33,12 @@ public class ThingsLambdaMultiAccept {
     private static final String LABEL = "label";
     private static final String TYPE = "type";
     private static final String ACCEPT = "accept";
-    private static final int MIN_SEARCH_CHARS = 3;
+    private static final String SEARCH_WILD_CARD = "*";
+
+    private static final String BAD_SEARCH = "400 - Bad Request - Search invalid:";
+
+
+    private static final Integer SEARCH_TOKEN_MIN_LENGTH = 4;
 
 
     private void checkIdAndLabelSearch(String id, String label) {
@@ -42,15 +51,11 @@ public class ThingsLambdaMultiAccept {
             throw new ThingBadSearchRequestException("400 - A label or id is required to search");
     }
 
-    private void checkSearchOverMinCharLimit(String id, String label) {
-        if (id.length()==0  && label.length()<MIN_SEARCH_CHARS)
-            throw new ThingBadSearchRequestException("400 - A search label must be " + MIN_SEARCH_CHARS + " or more chars");
-    }
 
     private void checkParams(String id, String label, String type) {
         checkNoSearch(id, label);
         checkIdAndLabelSearch(id, label);
-        checkSearchOverMinCharLimit(id, label);
+
     }
 
     /**
@@ -68,11 +73,13 @@ public class ThingsLambdaMultiAccept {
 
         checkParams(id, label, type);
 
+        label = validSearchString(label);
+
         String result = "";
         try {
             if (requestJson.get(ACCEPT).toString().equals("application/ld+json")) {
                 ThingsJSONLDService thingsJSONLDService = new ThingsServiceJSONLD(blazeGraphConfig);
-                if (label.length()>=MIN_SEARCH_CHARS) {
+                if (label.length()>=1) {
                     Repository thingByLabelRepository = new ThingByLabelJSONLDRepository(thingsJSONLDService);
                     if (blazeGraphConfig.getUseCache())
                         thingsJSONLDService = new CachedThingsJSONLDService(blazeGraphConfig, thingByLabelRepository, thingsJSONLDService, blazeGraphConfig.getUseLocalCache());
@@ -89,7 +96,7 @@ public class ThingsLambdaMultiAccept {
                 mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
                 mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
                 ThingsService thingService = new ThingService(blazeGraphConfig);
-                if (label.length()>=MIN_SEARCH_CHARS) {
+                if (label.length()>=1) {
                     Repository thingByLabelRepository = new ThingByLabelRepository(thingService);
                     if (blazeGraphConfig.getUseCache())
                         thingService = new CachedThingsService(blazeGraphConfig, thingByLabelRepository, thingService, blazeGraphConfig.getUseLocalCache());
@@ -112,6 +119,35 @@ public class ThingsLambdaMultiAccept {
         }
         if (result == null)
             throw new ThingNotFoundException("404 - Thing Not Found" + requestJson.get(ID));
+    }
+
+    private void checkSearchTokensValid(String word, String searchString) {
+        Pattern pattern = Pattern.compile("(\\*)");
+        Matcher matcher = pattern.matcher(word);
+
+        int numberOfWildCards = 0;
+        while (matcher.find()) {
+            numberOfWildCards++;
+        }
+        if (numberOfWildCards > 1 ) {
+            throw new ThingBadSearchRequestException(BAD_SEARCH + " Search token [" + word + "] within the search string [" + searchString + "] can only include a single trailing " + SEARCH_WILD_CARD + " wildcard supporting starts with");
+        }
+        if (numberOfWildCards == 1 ) {
+            if (word.length() < SEARCH_TOKEN_MIN_LENGTH )
+                throw new ThingBadSearchRequestException(BAD_SEARCH + " Search token [" + word + "] length [" + word.length() + "] must be [" + SEARCH_TOKEN_MIN_LENGTH + "] or more characters" );
+
+            if ( !word.substring(word.length() - 1).equals(SEARCH_WILD_CARD) ) {
+                throw new ThingBadSearchRequestException(BAD_SEARCH + " Search token [" + word + "] within the search string [" + searchString + "] must only include trailing wildcards supporting starts with");
+            }
+        }
+    }
+    public String validSearchString(String searchString) {
+        final String compactedSearchString = searchString.replaceAll("\\s+", " ").trim();
+
+        List<String> words = Arrays.asList(compactedSearchString.split("\\s+"));
+        words.forEach(word -> checkSearchTokensValid(word, compactedSearchString));
+
+        return compactedSearchString;
     }
 
 }

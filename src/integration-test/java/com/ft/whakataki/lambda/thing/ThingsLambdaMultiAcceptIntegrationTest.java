@@ -41,7 +41,6 @@ public class ThingsLambdaMultiAcceptIntegrationTest {
 
     }
 
-    @Ignore
     @Test
     public void testThingByLabel() throws Exception {
         ThingsLambdaMultiAccept thingsLambdaMultiAccept = new ThingsLambdaMultiAccept();
@@ -49,7 +48,7 @@ public class ThingsLambdaMultiAcceptIntegrationTest {
         ThingsRequest thingsRequest = new ThingsRequest();
         thingsRequest.environment = "local";
         thingsRequest.setAccept("application/ld+json");
-        thingsRequest.label = "HEAD";
+        thingsRequest.label = "HEA";
         thingsRequest.type = "http://www.ft.com/ontology/agent/Role";
 
         // JSON-LD

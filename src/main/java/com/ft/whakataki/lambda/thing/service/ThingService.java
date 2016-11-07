@@ -30,7 +30,7 @@ public class ThingService implements ThingsService, ThingServiceI {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThingService.class);
 
-    private final String PROCOL = "http://";
+    private final String PROCOL = "https://";
     private final String RESOURCE = "/things/";
     private final Pattern THING_UUID_REG_EX = Pattern.compile("http://.*/things/(.*)");
 
